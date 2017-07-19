@@ -7,7 +7,7 @@ var canvasHeight = 400;
 
 function startGame(){
 	myGameArea.start();
-	player = new entity(10, 10, "red", 10, canvasHeight / 2);
+	player = new entity(10, 10, "aqua", 10, canvasHeight / 2);
 }
 
 var myGameArea = {
@@ -19,6 +19,14 @@ var myGameArea = {
 	    document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 		
 		this.interval = setInterval(updateGameArea, 20);
+		
+        window.addEventListener('keydown', function (e) {
+            myGameArea.keys = (myGameArea.keys || []);
+            myGameArea.keys[e.keyCode] = true;
+        })
+        window.addEventListener('keyup', function (e) {
+            myGameArea.keys[e.keyCode] = false; 
+        })
 	},
 	
 	clear : function(){
@@ -26,21 +34,15 @@ var myGameArea = {
 	}
 }
 
-function entity(entityWidth, entityHeight, entityColor, x, y){
-	this.entityWidth = entityWidth;
-	this.entityHeight = entityHeight;
-	this.x = x;
-	this.y = y;
-	
-	this.update = function(){
-		ctx = myGameArea.context;
-		ctx.fillStyle = entityColor;
-		ctx.fillRect(this.x, this.y, this.entityWidth, this.entityHeight);
-	}
-}
 
 function updateGameArea(){
     myGameArea.clear();
-    player.x += 1;
+    player.speedX = 0;
+    player.speedY = 0; 
+    if (myGameArea.keys && myGameArea.keys[37]) {player.speedX = -1; }
+    if (myGameArea.keys && myGameArea.keys[39]) {player.speedX = 1; }
+    if (myGameArea.keys && myGameArea.keys[38]) {player.speedY = -1; }
+    if (myGameArea.keys && myGameArea.keys[40]) {player.speedY = 1; }
+    player.newPos();
     player.update();
 }
